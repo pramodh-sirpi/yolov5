@@ -16,7 +16,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Package the YOLOv5 model
-RUN !python export.py --weights best.pt --include saved_model --nms
+RUN python export.py --weights best.pt --include saved_model --nms
 RUN !mkdir export && mkdir export/Servo
 RUN !mv best_saved_model export/Servo/1
 RUN !tar -czvf model.tar.gz export
