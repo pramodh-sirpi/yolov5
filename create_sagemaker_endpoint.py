@@ -12,7 +12,7 @@ import tensorflow as tf
 from tensorflow.keras import backend
 from sagemaker.tensorflow import TensorFlowModel
 
-ls
+
 
 #!cd yolov5
 
