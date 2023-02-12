@@ -1,9 +1,0 @@
-# train and val data
-train: /content/drive/MyDrive/datasets/images/train
-val: /content/drive/MyDrive/datasets/images/train
-
-# number of classes
-nc: 2
-
-# class names
-names: ["defect", "non-defect"]
