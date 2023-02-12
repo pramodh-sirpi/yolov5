@@ -60,7 +60,4 @@ jobs:
         docker push $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
     - name: Create Amazon SageMaker Endpoint
       run: |
-        aws sagemaker create-endpoint \
-          --endpoint-name yolo-endpoint \
-          --endpoint-config-name yolo-endpoint-config \
-          --production-variants "VariantName=yolo-variant,ModelName=model,InitialInstanceCount=1,InstanceType=ml.t2.medium"
+        python create_sagemaker_endpoint.py
