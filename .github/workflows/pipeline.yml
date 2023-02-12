@@ -1,0 +1,61 @@
+name: YOLOv5 on Amazon SageMaker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CLEARML_CURRENT_TASK: ${{ steps.clearml.outputs.current_task_id }}
+  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  aws-region: ${{ secrets.AWS_REGION }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1-mesa-glx
+        pip install -r requirements.txt
+    - name: Build and Test Model
+      run: |
+        python test.py --data data.yaml --weights best.pt --img /datasets/images/val/images.jpg
+
+
+    #- name: Configure ClearML
+      #uses: allegroai/clearml-github-action@v1.1.1
+      #with:
+        #task_name: "YOLOv5 Training"
+        #api_key: ${{ secrets.CLEARML_API_KEY }}
+        #project_name: "My Project"
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: Upload model.tar.gz to S3
+      run: |
+        aws s3 cp model.tar.gz s3://${{ secrets.S3_BUCKET_NAME }}/model.tar.gz
+    - name: Build and Push Docker Image
+      env:
+        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        IMAGE_NAME: yolo-sagemaker
+        IMAGE_TAG: latest
+      run: |
+        $(aws ecr get-login --no-include-email)
+        docker build -t $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+    - name: Create Amazon SageMaker Endpoint
+      run: |
+        aws sagemaker create-endpoint \
+          --endpoint-name yolo-endpoint \
+          --endpoint-config-name yolo-endpoint-config \
+          --production-variants "VariantName=yolo-variant,ModelName=model,InitialInstanceCount=1,InstanceType=ml.t2.medium"
