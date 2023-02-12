@@ -10,6 +10,7 @@ env:
   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   aws-region: ${{ secrets.AWS_REGION }}
+  GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
 
 jobs:
   build-and-deploy:
@@ -24,6 +25,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build and Test Model
       run: |
+        git clone --branch $ENV https://devops1-sirpi:$GIT_TOKEN@github.com/pramodh-sirpi/yolov5.git helmfiles
         python test.py --data data.yaml --weights best.pt --img /datasets/images/val/images.jpg
 
 
