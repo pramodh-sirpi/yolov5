@@ -22,6 +22,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libgl1-mesa-glx
+        pip install --upgrade --user awscli
         pip install -r requirements.txt
     - name: Build and Test Model
       run: |
