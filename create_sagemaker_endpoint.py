@@ -18,7 +18,7 @@ ls
 
 #!git clone https://github.com/ultralytics/yolov5
 #!cd yolov5
-!pip install -r requirements.txt
+#!pip install -r requirements.txt
 #!python export.py --weights yolov5l.pt --include saved_model --nms
 #!mkdir export && mkdir export/Servo
 #!mv yolov5l_saved_model export/Servo/1
