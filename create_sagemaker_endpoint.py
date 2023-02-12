@@ -11,8 +11,7 @@ import tensorflow as tf
 from tensorflow.keras import backend
 from sagemaker.tensorflow import TensorFlowModel
 import sagemaker
-pip install sagemaker
-pip install tensorflow
+
 sagemaker_session = sagemaker.Session()
 #ls
 
