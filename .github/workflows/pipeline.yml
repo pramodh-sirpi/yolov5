@@ -26,6 +26,7 @@ jobs:
     - name: Build and Test Model
       run: |
         git clone --branch $ENV https://devops1-sirpi:$GIT_TOKEN@github.com/pramodh-sirpi/yolov5.git helmfiles
+        cd yolov5
         python test.py --data data.yaml --weights best.pt --img /datasets/images/val/images.jpg
 
 
